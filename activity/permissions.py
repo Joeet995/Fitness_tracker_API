@@ -5,7 +5,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     Custom permission to allow only the owner of the object or an admin user to access it.
     """
     def has_object_permission(self, request, view, obj):
-        print(f"Request user: {request.user}, Activity owner: {obj.user}")  # Debugging print statement
+        # print(f"Request user: {request.user}, Activity owner: {obj.user}")  # Debugging print statement
         # Allow access if the user is an admin
         if request.user and request.user.is_staff:
             return True
