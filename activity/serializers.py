@@ -17,4 +17,11 @@ class ActivitySerializer(serializers.ModelSerializer):
         if value > timezone.now().date():
             raise serializers.ValidationError("Date cannot be in the future.")
         return value
+    
+
+class ActivitySummarySerializer(serializers.Serializer):
+    total_duration = serializers.FloatField()
+    total_distance = serializers.FloatField()
+    total_calories = serializers.FloatField()
+
 

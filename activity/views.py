@@ -1,19 +1,47 @@
 from rest_framework import generics, permissions
 from .models import Activity
-from .serializers import ActivitySerializer
+from .serializers import ActivitySerializer, ActivitySummarySerializer
 from rest_framework.exceptions import PermissionDenied
 from django.db.models import Sum
 from django.utils import timezone
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from django.db.models import Q
 
 # List and Create activities
 class ActivityListCreateView(generics.ListCreateAPIView):
     serializer_class = ActivitySerializer
     permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access
 
+    # Enable DjangoFilterBackend and ordering
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['activity_type']  # Filter by activity type
+    ordering_fields = ['date', 'duration', 'calories_burned']  # Add sorting options
+
     def get_queryset(self):
-        # Return only the activities of the logged-in user
-        return Activity.objects.filter(user=self.request.user)
+
+        
+        user = self.request.user  # Only show activities of the logged-in user
+        queryset = Activity.objects.filter(user=user)
+
+
+        # Get query parameters for filtering
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        activity_type = self.request.query_params.get('activity_type')
+
+        # Filter by date range if provided
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
+
+        # Filter by activity type if provided
+        if activity_type:
+            queryset = queryset.filter(activity_type=activity_type)
+
+        return queryset
+        
+    
 
     def perform_create(self, serializer):
         # Associate the activity with the logged-in user
@@ -38,53 +66,34 @@ class ActivityDetailView(generics.RetrieveUpdateDestroyAPIView):
     
 
 class ActivitySummaryView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]  # Only logged-in users can access the summary
-    serializer_class = ActivitySerializer
+    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
+    serializer_class = ActivitySummarySerializer
 
-
-    def get(self, request):
-        # Retrieve query parameters for date filtering (optional)
-        start_date = request.query_params.get('start_date')
-        end_date = request.query_params.get('end_date')
-        
-        # Get the logged-in user
+    def get(self, request, *args, **kwargs):
+        # Get the current logged-in user
         user = request.user
 
-        # Filter activities based on the date range provided
+        # Optional date filtering (e.g., past week)
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        # Filter activities for the current user
         activities = Activity.objects.filter(user=user)
 
+        # Optionally filter by date range
         if start_date:
             activities = activities.filter(date__gte=start_date)
         if end_date:
             activities = activities.filter(date__lte=end_date)
 
-        # Aggregate the total duration, distance, and calories burned
-        summary = activities.aggregate(
+        # Aggregate the totals (sum of duration, distance, calories burned)
+        summary_data = activities.aggregate(
             total_duration=Sum('duration'),
             total_distance=Sum('distance'),
             total_calories=Sum('calories_burned')
         )
 
-        # Add trend data (e.g., activity count over time, if requested)
-        trends = self.get_trend_data(activities)
+        # Serialize the summary data
+        serializer = self.get_serializer(summary_data)
 
-        # Prepare the response data
-        response_data = {
-            'total_duration': summary['total_duration'] or 0,  # Fallback to 0 if no activities
-            'total_distance': summary['total_distance'] or 0,
-            'total_calories': summary['total_calories'] or 0,
-            'trends': trends  # Optional: trends like weekly/monthly breakdowns
-        }
-
-        return Response(response_data)
-
-    def get_trend_data(self, activities):
-        # Example trend: Count activities grouped by week (or month)
-        # This function can be expanded to include different time periods
-
-        trends = activities.extra(select={'week': "strftime('%W', date)"}) \
-                           .values('week') \
-                           .annotate(total_duration=Sum('duration')) \
-                           .order_by('week')
-
-        return trends
+        return Response(serializer.data)
