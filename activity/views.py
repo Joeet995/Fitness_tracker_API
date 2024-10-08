@@ -3,7 +3,6 @@ from .models import Activity
 from .serializers import ActivitySerializer, ActivitySummarySerializer
 from rest_framework.exceptions import PermissionDenied
 from django.db.models import Sum
-from django.utils import timezone
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
@@ -21,7 +20,6 @@ class ActivityListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
 
-        
         user = self.request.user  # Only show activities of the logged-in user
         queryset = Activity.objects.filter(user=user)
 
@@ -51,7 +49,7 @@ class ActivityListCreateView(generics.ListCreateAPIView):
 class ActivityDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
-    permission_classes = [permissions.IsAuthenticated]# Ensure the user is the owner
+    permission_classes = [permissions.IsAuthenticated]# Enable only authenticated users to access
 
     def get_object(self):
         # Get the activity object
