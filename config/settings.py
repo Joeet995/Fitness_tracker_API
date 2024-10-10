@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&ue2y@3z^^lusy*k7##jeu8&+jeoxg5jf7=+aa$$)nd3p7xyr1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -124,7 +125,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# Static files
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -144,5 +151,31 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
 }
+
+
+#enables the browser’s built-in protection against cross-site scripting (XSS) attacks
+SECURE_BROWSER_XSS_FILTER = True
+
+#prevent clickjacking by controlling whether your site can be embedded in iframes.
+X_FRAME_OPTIONS = 'DENY'
+
+#This setting prevents browsers from trying to guess the content type of a file and 
+#forces them to follow the Content-Type headers you specify
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
+#This ensures that users can only access your site securely over HTTPS. 
+#If you're using AWS or some other infrastructure where SSL is terminated at a load balancer
+
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+#Ensure that session cookies and CSRF tokens are only transmitted over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+#This controls how much information the browser sends in the Referer header when navigating away from your site
+SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'

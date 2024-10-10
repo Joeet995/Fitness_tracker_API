@@ -7,6 +7,7 @@ class CustomUser(AbstractUser):
     # Additional fields
     date_of_birth = models.DateField(null=True, blank=True)  # Date of Birth
     height = models.FloatField(null=True, blank=True)  # Height in meters or cm
+
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),

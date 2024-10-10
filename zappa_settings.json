@@ -1,0 +1,17 @@
+{
+    "dev": {
+        "django_settings": "config.settings",
+        "exclude": [
+            "boto3",
+            "dateutil",
+            "botocore",
+            "s3transfer",
+            "concurrent"
+        ],
+        "profile_name": "default",
+        "project_name": "fitness-tracker",
+        "runtime": "python3.12",
+        "s3_bucket": "alx-api-zappa",
+        "aws_region": "eu-central-1"
+    }
+}
