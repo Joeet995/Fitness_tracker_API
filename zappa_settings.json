@@ -9,9 +9,13 @@
             "concurrent"
         ],
         "profile_name": "default",
-        "project_name": "fitness-tracker",
+        "project_name": "fitness_tracker_API",
         "runtime": "python3.12",
         "s3_bucket": "alx-api-zappa",
-        "aws_region": "eu-central-1"
+        "aws_region": "eu-central-1",
+        "vpc_config": {
+            "SubnetIds": ["subnet-0b9fb3b821d9ae507"],
+            "SecurityGroupIds": ["sg-07ae15cd2367a3295"]
+        }
     }
 }

@@ -10,6 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import pymysql
+
+pymysql.install_as_MySQLdb()
+
 from pathlib import Path
 import os
 
@@ -26,7 +30,7 @@ SECRET_KEY = 'django-insecure-&ue2y@3z^^lusy*k7##jeu8&+jeoxg5jf7=+aa$$)nd3p7xyr1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["7gsak42dtj.execute-api.eu-central-1.amazonaws.com"]
 
 
 # Application definition
@@ -82,13 +86,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'FITNESS_APP',
-        'USER': 'root',
-        'PASSWORD': 'Youssef95',
-        'HOST': 'localhost',
+        'NAME': 'FITNESS_TRACKER',
+        'USER': 'admin',
+        'PASSWORD': 'Youssef95t',
+        'HOST': 'database-1.cb62suoke5cp.eu-central-1.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
+
+
 
 
 # Password validation

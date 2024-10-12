@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from .serializers import UserSerializer
 from .permissions import IsOwnerOrAdmin
 
-
 User = get_user_model()
 
 #API View for User management
