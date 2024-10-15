@@ -31,7 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ["7gsak42dtj.execute-api.eu-central-1.amazonaws.com"]
+ALLOWED_HOSTS = ['x024c7l2hl.execute-api.eu-central-1.amazonaws.com']
 
 
 # Application definition
